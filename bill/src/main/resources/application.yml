@@ -1,8 +1,8 @@
 spring:
     application: 
-        name: bill
+        name: Bill
     datasource: 
-        url: jdbc:postgresql://localhost:15001/bill
+        url: jdbc:postgresql://localhost:15001/Bill
         username: postgres
         password: secret99
     jpa:
@@ -14,3 +14,5 @@ spring:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
         hibernate:
             ddl-auto: create
+server:
+    port: 8085
