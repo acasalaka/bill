@@ -27,11 +27,6 @@ public class HospitalizationRestServiceImpl implements HospitalizationRestServic
             .baseUrl("http://localhost:8083/api")
             .build();
     }
-    @Override
-    public ReservationResponseDTO getReservationByPatientId(UUID patientId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getReservationByPatientId'");
-    }
 
     @Override
     public ReservationResponseDTO getReservationFromRest(String reservationId) throws Exception {

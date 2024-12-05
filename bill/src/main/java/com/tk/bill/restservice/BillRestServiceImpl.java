@@ -48,8 +48,14 @@ public class BillRestServiceImpl implements BillRestService {
         billResponseDTO.setAppointmentId(bill.getAppointmentId());
         billResponseDTO.setReservationId(bill.getReservationId());
         billResponseDTO.setPatientId(bill.getPatientId());
-        billResponseDTO.setStatus(bill.getStatus());
-
+        if (bill.getStatus().equals(BillStatus.UNPAID)){
+            billResponseDTO.setStatus(BillStatus.UNPAID);
+            return billResponseDTO;
+        }
+        if (bill.getStatus().equals(BillStatus.PAID)){
+            billResponseDTO.setStatus(BillStatus.PAID);
+            return billResponseDTO;
+        }
 
         return billResponseDTO;
     }
@@ -98,23 +104,47 @@ public class BillRestServiceImpl implements BillRestService {
        if(bill == null){
         return null;
        }
-       
-       bill.setPolicyId(billDTO.getPolicyId());
-       bill.setReservationId(billDTO.getReservationId());
-       System.out.println("PERTAMA : " + billDTO.getStatus());
-       System.out.println("KEDUA : " + bill.getStatus());
-       bill.setStatus(billDTO.getStatus());
-       System.out.println("KETIGA : " + bill.getStatus());
-       BillResponseDTO billResponseDTO = billToBillResponseDTO(bill);
-       System.out.println("Data = "+ billResponseDTO);
-       try {
-           var reservation = hospitalService.getReservationFromRest(bill.getReservationId());
-           var reservationFee = reservation.getTotalFee();
-           billResponseDTO.setReservationFee(reservationFee);
-           return billResponseDTO;
-       } catch (Exception e) {
-           throw new RuntimeException("Failed to get reservation", e);
-       }
+
+        AppointmentResponseDTO appointment;
+        ReservationResponseDTO reservation;
+        if( bill.getStatus().equals(BillStatus.UNPAID) && bill.getReservationId() == null){
+            try{
+                appointment = appointmentService.getAppointmentFromRest(bill.getAppointmentId());
+                if ( appointment.getStatus().equals("Done")){
+                    bill.setStatus(BillStatus.PAID);
+                    bill.setPolicyId(billDTO.getPolicyId());
+                    bill.setReservationId(billDTO.getReservationId());
+                    bill.setUpdatedAt(new Date());
+                    billDb.save(bill);
+                    BillResponseDTO billResponseDTO = billToBillResponseDTO(bill);
+                    var appointmentFee = appointment.getTotalFee();
+                    billResponseDTO.setAppointmentFee(appointmentFee);
+                    billResponseDTO.setSubtotal(appointmentFee);
+                    return billResponseDTO;
+                }
+
+            } catch (Exception e){
+                throw new RuntimeException("Bill gabisa dibayar", e);
+            }
+        }    
+        if (billDTO.getReservationId() != null && bill.getAppointmentId() == null){
+            try{
+                reservation = hospitalService.getReservationFromRest(bill.getReservationId());
+                bill.setStatus(BillStatus.PAID);
+                bill.setPolicyId(billDTO.getPolicyId());
+                bill.setReservationId(billDTO.getReservationId());
+                bill.setUpdatedAt(new Date());
+                billDb.save(bill);
+                BillResponseDTO billResponseDTO = billToBillResponseDTO(bill);
+                var reservationFee = reservation.getTotalFee();
+                billResponseDTO.setReservationFee(reservationFee);
+                billResponseDTO.setSubtotal((long) reservationFee);
+                return billResponseDTO;
+            } catch (Exception e){
+                throw new RuntimeException("Bill gabisa dibayar", e);
+            }
+        }
+        return null;
        
     }
 
@@ -276,9 +306,5 @@ public class BillRestServiceImpl implements BillRestService {
     public long countTotalBill(long appointmentFee, double reservationFee, long policyFee) {
         return appointmentFee + (long) reservationFee + policyFee;
     }
-
-    
-    
-
 
 }

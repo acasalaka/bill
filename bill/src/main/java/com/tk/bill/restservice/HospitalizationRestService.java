@@ -8,5 +8,4 @@ import com.tk.bill.restdto.response.ReservationResponseDTO;
 public interface HospitalizationRestService {
     ReservationResponseDTO getReservationByPatientId(UUID patientId);
     ReservationResponseDTO getReservationFromRest (String reservationId) throws Exception;
-    // Double getReservationFee(String reservationId);
 }

@@ -82,13 +82,13 @@ public class BillRestController {
 
 
     // Ini yang pay bill 
-    @PutMapping("/{billId}/update")
-    public ResponseEntity<?> updateBill(@PathVariable("billId") UUID billId, @RequestBody UpdateBillRequestDTO billDTO) {
+    @PutMapping("/{billId}/pay")
+    public ResponseEntity<?> payBill(@PathVariable("billId") UUID billId, @RequestBody UpdateBillRequestDTO billDTO) {
         try {
             BillResponseDTO billResponse = billRestService.payBill(billId, billDTO);
             var response = new BaseResponseDTO<BillResponseDTO>();
             response.setStatus(200);
-            response.setMessage("Bill dengan ID " + billId + " berhasil diubah");
+            response.setMessage("Bill dengan ID " + billId + " berhasil dibayar");
             response.setData(billResponse);
             response.setTimestamp(new Date());
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -100,6 +100,7 @@ public class BillRestController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PostMapping("/createByAppointment")
     public ResponseEntity<?> createBillAppointment(@RequestBody AddBillRequestDTO billDTO) {
