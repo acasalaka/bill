@@ -80,10 +80,12 @@ public class BillRestController {
         return new ResponseEntity<>(baseResponseDTO, HttpStatus.OK);
     }
 
+
+    // Ini yang pay bill 
     @PutMapping("/{billId}/update")
     public ResponseEntity<?> updateBill(@PathVariable("billId") UUID billId, @RequestBody UpdateBillRequestDTO billDTO) {
         try {
-            BillResponseDTO billResponse = billRestService.updateBill(billId, billDTO);
+            BillResponseDTO billResponse = billRestService.payBill(billId, billDTO);
             var response = new BaseResponseDTO<BillResponseDTO>();
             response.setStatus(200);
             response.setMessage("Bill dengan ID " + billId + " berhasil diubah");

@@ -10,10 +10,13 @@ import com.tk.bill.restdto.response.BillResponseDTO;
 
 public interface BillRestService {
     BillResponseDTO getBillByPatientId(UUID patientId);
-    BillResponseDTO updateBill(UUID billId, UpdateBillRequestDTO billDTO);
+    BillResponseDTO updateBillStatus(UUID billId, UpdateBillRequestDTO billDTO);
     BillResponseDTO addAppointmentBill (AddBillRequestDTO billDTO) throws Exception;
     BillResponseDTO addReservationBill (AddBillRequestDTO billDTO) throws Exception;
     List<BillResponseDTO> getAllBill();
     BillResponseDTO getBillById(UUID billId);
+    long countTotalBill(long appointmentFee, double reservationFee, long policyFee);
+    BillResponseDTO payBill(UUID billId, UpdateBillRequestDTO billDTO);
+ 
 
 }

@@ -43,7 +43,7 @@ public class HospitalizationRestServiceImpl implements HospitalizationRestServic
             .block();
 
             if (reservation == null) {
-                throw new Exception("Failed consume API getPekerjaById");
+                throw new Exception("Failed consume API");
             }
     
             if (reservation.getStatus() != 200) {
